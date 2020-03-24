@@ -16,7 +16,7 @@ price = []
 price_discount = []
 brand = []
 
-for i in range(1, 2): # 19 страниц
+for i in range(1, 20): # 19 страниц
     url = 'https://www.wildberries.ru/catalog/0/search.aspx?subject=' \
           '883&search=%D0%BF%D0%BE%D1%81%D1%82%D0%B5%D0%BB%D1%8C%D0%BD%' \
           'D0%BE%D0%B5%20%D0%B1%D0%B5%D0%BB%D1%8C%D0%B5&page=' + str(i)
