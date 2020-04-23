@@ -1,12 +1,40 @@
 import shutil
 import datetime
+import os
+import time
 
-now = datetime.datetime.now()
+start_time = time.time()
 
-d = list(map(str, str(now).split()))
-e = list(map(str, str(d[0]).split('-')))
-datefld = str(e[2]) + '.' + str(e[1]) + '.' + str(e[0])
 
+def last_fld():
+    date_fld = [i for i in os.walk(path)][0][1]
+    last = '00.00.0000'
+    for date in date_fld:
+        if int(date[6:]) > int(last[6:]):
+            last = date
+        elif int(date[6:]) == int(last[6:]):
+            if int(date[3:5]) > int(last[3:5]):
+                last = date
+            elif int(date[3:5]) == int(last[3:5]):
+                if int(date[0:2]) >= int(last[0:2]):
+                    last = date
+    return last
+
+
+path = 'F:\\Дорогов'
+deleting_folder = last_fld()
+print('Последнее сохранение производилось: ', deleting_folder)
+
+try:
+    deleting_dir_path = 'F:\\Дорогов\\' + deleting_folder + '\\VERICUT рабочая'
+    shutil.rmtree(deleting_dir_path)
+except:
+    print('Удаление папки F:\Дорогов\\', deleting_folder, '\VERICUT рабочая - не требуется', sep='')
+
+today = datetime.datetime.today()
+datefld = today.strftime('%d.%m.%Y')
+
+print('Резервное копирование началось')
 print('Дождитесь сообщения о завершении копирования:')
 
 shutil.copytree('C:\\Users\\user1174\\Desktop\\VERICUT рабочая',
@@ -23,5 +51,7 @@ shutil.copytree('\\\KUPAVNA-DATA\\Kupavna\\==ПРОГРАММЫ TREM MILL==',
                 'F:\\Дорогов\\' + datefld + '\\==ПРОГРАММЫ TREM MILL==')
 
 print('Резервное копирование завершено!')
+print('Время выполнения: ', end='')
+print("%s seconds" % (time.time() - start_time))
 print('Введите любую цифру')
 f = int(input())
