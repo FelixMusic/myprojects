@@ -76,10 +76,8 @@ for link in links:
     j = j + 1
 
 # имя файла xls с текущей датой
-date_now = datetime.datetime.now()
-date_now_list = list(map(str, str(date_now).split()))
-now_list = list(map(str, str(date_now_list[0]).split('-')))
-datefld = str(now_list[2]) + '.' + str(now_list[1]) + '.' + str(now_list[0])
+today = datetime.datetime.today()
+datefld = today.strftime('%d.%m.%Y')
 xls_file_name = 'WB_postelnoe_' + datefld + '.xls'
 
 # Далее зиписываем данные в файл .xls
