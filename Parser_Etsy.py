@@ -14,6 +14,8 @@ socket.socket = socks.socksocket
 useragent = UserAgent()
 
 names = []
+links = []
+images = []
 
 for i in range(1, 222): # 221 страниц
     url = 'https://www.etsy.com/shop/RStudioDesign/reviews?ref=pagination&page=' + str(i)
@@ -34,6 +36,22 @@ for i in range(1, 222): # 221 страниц
         name = name.find('p').text
         names.append(name)
 
+    links_soup = soup.find_all('div', class_='mt-xs-3 clearfix')
+    for link in links_soup:
+        try:
+            link = link.find('a').get('href')
+            links.append('https://www.etsy.com' + link)
+        except:
+            print('  No link')
+
+    images_soup = soup.find_all('div', class_='card-img-wrap')
+    for image in images_soup:
+        try:
+            image = image.find('img').get('src')
+            images.append(image)
+        except:
+            print('  No image')
+
 # Далее записываем данные в файл .xls
 book = xlwt.Workbook('utf8')  # Создаем книгу
 # Создаем шрифт
@@ -46,10 +64,14 @@ sheet = book.add_sheet('RStudioDesign')
 m = 0
 for i in range(len(names)):
     sheet.write(m, 0, names[i], font)
+    sheet.write(m, 1, links[i], font)
+    sheet.write(m, 2, images[i], font)
     m = m + 1
 
 sheet.row(1).height = 2500  # Высота строки
 sheet.col(0).width = 20000  # Ширина колонки
+sheet.col(1).width = 20000
+sheet.col(2).width = 20000
 
 sheet.portrait = False  # Лист в положении "альбом"
 sheet.set_print_scaling(85)  # Масштабирование при печати
