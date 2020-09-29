@@ -7,22 +7,22 @@ import random
 import socks
 import socket
 
-target_list = [('https://www.etsy.com/shop/NikkiPattern/reviews?ref=pagination&page=', 217, 'NikkiPattern'),
-               ('https://www.etsy.com/shop/CrossStitchingLovers/reviews?ref=pagination&page=', 106, 'CrossStitchingLovers'),
-               ('https://www.etsy.com/uk/shop/plasticlittlecovers/reviews?ref=pagination&page=', 264, 'plasticlittlecovers'),
-               ('https://www.etsy.com/shop/VladaXstitch/reviews?ref=pagination&page=', 124, 'VladaXstitch'),
-               ('https://www.etsy.com/shop/AlitonEmbroidery/reviews?ref=pagination&page=', 117, 'AlitonEmbroidery'),
-               ('https://www.etsy.com/shop/Sewingseed/reviews?ref=pagination&page=', 204, 'Sewingseed'),
-               ('https://www.etsy.com/shop/2x2StitchArt/reviews?ref=pagination&page=', 105, '2x2StitchArt'),
-               ('https://www.etsy.com/shop/GentleFeather/reviews?ref=pagination&page=', 70, 'GentleFeather'),
-               ('https://www.etsy.com/ru/shop/PeppermintPurple/reviews?ref=pagination&page=', 88, 'PeppermintPurple'),
-               ('https://www.etsy.com/shop/Love4CrossStitch/reviews?ref=pagination&page=', 63, 'Love4CrossStitch'),
-               ('https://www.etsy.com/ru/shop/ElCrossStitch/reviews?ref=pagination&page=', 69, 'ElCrossStitch'),
-               ('https://www.etsy.com/uk/shop/diana70/reviews?ref=pagination&page=', 103, 'diana70'),
-               ('https://www.etsy.com/ru/shop/galabornpatterns/reviews?ref=pagination&page=', 54, 'galabornpatterns'),
-               ('https://www.etsy.com/ru/shop/redbeardesign/reviews?ref=pagination&page=', 81, 'redbeardesign'),
-               ('https://www.etsy.com/uk/shop/WellStitches/reviews?ref=pagination&page=', 37, 'WellStitches'),
-               ('https://www.etsy.com/ru/shop/PineconeMcGee/reviews?ref=pagination&page=', 40, 'PineconeMcGee')]
+target_list = ['https://www.etsy.com/shop/NikkiPattern/reviews?ref=pagination&page=',
+               'https://www.etsy.com/shop/CrossStitchingLovers/reviews?ref=pagination&page=',
+               'https://www.etsy.com/uk/shop/plasticlittlecovers/reviews?ref=pagination&page=',
+               'https://www.etsy.com/shop/VladaXstitch/reviews?ref=pagination&page=',
+               'https://www.etsy.com/shop/AlitonEmbroidery/reviews?ref=pagination&page=',
+               'https://www.etsy.com/shop/Sewingseed/reviews?ref=pagination&page=',
+               'https://www.etsy.com/shop/2x2StitchArt/reviews?ref=pagination&page=',
+               'https://www.etsy.com/shop/GentleFeather/reviews?ref=pagination&page=',
+               'https://www.etsy.com/ru/shop/PeppermintPurple/reviews?ref=pagination&page=',
+               'https://www.etsy.com/shop/Love4CrossStitch/reviews?ref=pagination&page=',
+               'https://www.etsy.com/ru/shop/ElCrossStitch/reviews?ref=pagination&page=',
+               'https://www.etsy.com/uk/shop/diana70/reviews?ref=pagination&page=',
+               'https://www.etsy.com/ru/shop/galabornpatterns/reviews?ref=pagination&page=',
+               'https://www.etsy.com/ru/shop/redbeardesign/reviews?ref=pagination&page=',
+               'https://www.etsy.com/uk/shop/WellStitches/reviews?ref=pagination&page=',
+               'https://www.etsy.com/ru/shop/PineconeMcGee/reviews?ref=pagination&page=']
 
 # работаем под запущенным Tor-браузером
 socks.set_default_proxy(socks.SOCKS5, "localhost", 9150)
@@ -31,19 +31,47 @@ socket.socket = socks.socksocket
 useragent = UserAgent()
 
 for k in range(len(target_list)):
-    print(target_list[k][2])
     names = []
     links = []
     images = []
+    pages_list = []
 
-    for i in range(1, target_list[k][1]):
-        url = target_list[k][0] + str(i)
+    # извлекаем имя магазина и кол-во страниц пагинации
+    url = target_list[k] + '1'
+    response = requests.get(url, headers={'User-Agent': useragent.random})  # подменяем агент
+    if response.status_code != 200:
+        print(response.status_code)
+        time.sleep(random.randrange(60, 80, 1))
+        url = target_list[k] + '1'
+        response = requests.get(url, headers={'User-Agent': useragent.random})
+        print('  ', response.status_code, k)
+
+    html = response.content
+    soup = BeautifulSoup(html, 'html.parser')
+
+    shop_name_soup = soup.find('div', class_='flag condensed-header-shop')
+    shop_name = shop_name_soup.find('div', class_='hide-xs hide-sm')
+    shop_name = shop_name.text.replace('\n', '').strip() # имя магазина
+
+    pagination_soup = soup.find('ul', class_='btn-group-md list-unstyled text-left')
+    all_pages = pagination_soup.find_all('li', class_='btn btn-list-item btn-secondary btn-group-item-md hide-xs hide-sm hide-md')
+
+    for page in all_pages:
+        page_number = page.find('span', class_='screen-reader-only').text.replace('\n', '').strip().replace('Page ', '')
+        pages_list.append(int(page_number))
+
+    pagination_end = max(pages_list) # кол-во страниц пагинации
+    print(shop_name)
+
+    # парсим текущий магазин
+    for i in range(1, pagination_end + 1):
+        url = target_list[k] + str(i)
         response = requests.get(url, headers={'User-Agent': useragent.random})  # подменяем агент
         print(response.status_code, i)  # статус сервера (должен быть 200)
         # если статус не 200, делаем паузу 60-80 сек и снова делаем запрос:
         if response.status_code != 200:
             time.sleep(random.randrange(60, 80, 1))
-            url = target_list[k][0] + str(i)
+            url = target_list[k] + str(i)
             response = requests.get(url, headers={'User-Agent': useragent.random})
             print('  ', response.status_code, i)
 
@@ -78,7 +106,7 @@ for k in range(len(target_list)):
         italic off; align: wrap on, vert top, horiz left;\
         pattern: pattern solid, fore_colour white;')
     # Добавляем лист
-    sheet = book.add_sheet(target_list[k][2])
+    sheet = book.add_sheet(shop_name)
     # Заполняем ячейки (Строка, Колонка, Текст, Шрифт)
     m = 0
     for i in range(len(names)):
@@ -94,5 +122,5 @@ for k in range(len(target_list)):
 
     sheet.portrait = False  # Лист в положении "альбом"
     sheet.set_print_scaling(85)  # Масштабирование при печати
-    file_name = 'Shop_' + str(k + 1) + '_' + target_list[k][2] + '.xls'
+    file_name = 'Shop_' + str(k + 1) + '_' + shop_name + '.xls'
     book.save(file_name)  # Сохраняем в файл
