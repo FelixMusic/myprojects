@@ -46,7 +46,7 @@ for i in range(1, 3): # 35 страниц Kia Rio
     time.sleep(random.randrange(2, 5, 1))
 
 
-# идем по ссылкам всех заказов и забираем требуемую информацию
+# идем по ссылкам всех автомобилей и забираем требуемую информацию
 for link in links:
     driver.get(link)
     car_page = driver.page_source
