@@ -1,5 +1,5 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+# from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
 import xlwt
@@ -29,13 +29,13 @@ car_name = []
 
 
 # запускаем chrome с нашим профилем пользователя
-file_name_profile = r'C:\\Users\\user1174\\AppData\\Local\\Google\\Chrome\\User Data'
-options = webdriver.ChromeOptions()
-options.add_argument("user-data-dir=" + file_name_profile)
-driver = webdriver.Chrome(executable_path="C:\\Users\\user1174\\.PyCharmCE2019.3\\chromedriver.exe", options=options)
+# file_name_profile = r'C:\\Users\\user1174\\AppData\\Local\\Google\\Chrome\\User Data'
+# options = webdriver.ChromeOptions()
+# options.add_argument("user-data-dir=" + file_name_profile)
+# driver = webdriver.Chrome(executable_path="C:\\Users\\user1174\\.PyCharmCE2019.3\\chromedriver.exe", options=options)
+driver = webdriver.Chrome(executable_path="C:\\Users\\Alexander\\.PyCharmCE2019.3\\chromedriver.exe")
 
-
-for i in range(1, 3): # 35 страниц Kia Rio
+for i in range(1, 2): # 34 страниц Kia Rio
     driver.get('https://auto.ru/moskva/cars/kia/rio/all/?page=' + str(i) + '&output_type=list&geo_id=21656')
     current_page = driver.page_source
     soup = BeautifulSoup(current_page, 'html.parser')
@@ -119,7 +119,7 @@ for link in links:
 
     # Количество владельцев
     try:
-        owners_count.append(soup.find('li', class_='CardInfo__row CardInfo__row_ownersCount').find('span').next_sibling.text)
+        owners_count.append(soup.find('li', class_='CardInfo__row CardInfo__row_ownersCount').find('span').next_sibling.text.replace('\xa0', ' '))
     except:
         owners_count.append('None')
 
@@ -155,6 +155,8 @@ for link in links:
 
 driver.quit()
 
+print(owners_count)
+
 # Далее зиписываем данные в файл .xls
 book = xlwt.Workbook('utf8')  # Создаем книгу
 # Создаем шрифт
@@ -178,12 +180,13 @@ for i in range(len(links)):
     sheet.write(m, 9, drive[i], font)
     sheet.write(m, 10, wheel[i], font)
     sheet.write(m, 11, condition[i], font)
-    sheet.write(m, 12, passport[i], font)
-    sheet.write(m, 13, customs[i], font)
-    sheet.write(m, 14, complectation_type[i], font)
-    sheet.write(m, 15, region[i], font)
-    sheet.write(m, 16, price[i], font)
-    sheet.write(m, 17, links[i], font)
+    sheet.write(m, 12, owners_count[i], font)
+    sheet.write(m, 13, passport[i], font)
+    sheet.write(m, 14, customs[i], font)
+    sheet.write(m, 15, complectation_type[i], font)
+    sheet.write(m, 16, region[i], font)
+    sheet.write(m, 17, price[i], font)
+    sheet.write(m, 18, links[i], font)
     m = m + 1
 
 sheet.row(1).height = 2500  # Высота строки
@@ -199,12 +202,13 @@ sheet.col(8).width = 6000
 sheet.col(9).width = 6000
 sheet.col(10).width = 4000
 sheet.col(11).width = 8000
-sheet.col(12).width = 4000
-sheet.col(13).width = 5000
-sheet.col(14).width = 12000
-sheet.col(15).width = 6000
+sheet.col(12).width = 5000
+sheet.col(13).width = 4000
+sheet.col(14).width = 5000
+sheet.col(15).width = 12000
 sheet.col(16).width = 6000
-sheet.col(17).width = 35000
+sheet.col(17).width = 6000
+sheet.col(18).width = 35000
 
 sheet.portrait = False  # Лист в положении "альбом"
 sheet.set_print_scaling(85)  # Масштабирование при печати
