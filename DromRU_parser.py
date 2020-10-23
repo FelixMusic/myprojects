@@ -4,8 +4,6 @@ from fake_useragent import UserAgent
 import xlwt
 import time
 import random
-import socks
-import socket
 
 start_time = time.time()
 
@@ -49,7 +47,6 @@ for link in links:
 
     # Год выпуска
     try:
-        # years.append(soup.find('h1', class_='css-cgwg2n e18vbajn0').text)
         year = soup.find('h1', class_='css-cgwg2n e18vbajn0').text
         temp_year = [int(s) for s in year.split() if s.isdigit()]
         years.append(temp_year[0])
@@ -61,7 +58,6 @@ for link in links:
                             .next_sibling.find('a').text.replace('\xa0л.с.', ''))
     except:
         engine_power.append('None')
-
     # Тип трансмиссии
     try:
         transmission.append(soup.find('div', class_='css-0 epjhnwz1').find('tr', class_='css-10191hq ezjvm5n2')
@@ -150,4 +146,3 @@ print('Количество позиций: ', end='')
 print(len(links))
 print('Время выполнения: ', end='')
 print("%s seconds" % (time.time() - start_time))
-
