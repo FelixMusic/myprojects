@@ -19,7 +19,7 @@ transmission = []
 owners_count = []
 car_name = []
 
-for i in range(1, 101): # 100 страниц
+for i in range(1, 101): # 100 страниц (сайт дает спарсить только первые 100 страниц)
     url = 'https://auto.drom.ru/kia/rio/page' + str(i)
     response = requests.get(url, headers={'User-Agent': useragent.random})  # подменяем агент
     print(response.status_code, i)  # статус сервера (должен быть 200)
