@@ -109,17 +109,6 @@ for link in links:
         owners_count.append('None')
     j = j + 1
 
-# print(links)
-# print(years)
-# print(engine_power)
-# print(transmission)
-# print(body_type)
-# print(km_age)
-# print(car_name)
-# print(price)
-# print(owners_count)
-
-
 # Далее зиписываем данные в файл .xls
 book = xlwt.Workbook('utf8')  # Создаем книгу
 # Создаем шрифт
