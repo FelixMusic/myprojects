@@ -3,7 +3,6 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
 import xlwt
-import random
 
 start_time = time.time()
 
