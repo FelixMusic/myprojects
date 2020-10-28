@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
 import xlwt
+import random
 
 start_time = time.time()
 
@@ -23,7 +24,7 @@ options = webdriver.ChromeOptions()
 options.add_argument("user-data-dir=" + file_name_profile)
 driver = webdriver.Chrome(executable_path="C:\\Users\\user1174\\.PyCharmCE2019.3\\chromedriver.exe", options=options)
 
-for i in range(1, 2): # 100 страниц
+for i in range(1, 101): # 100 страниц
     url = 'https://www.avito.ru/rossiya/avtomobili/kia/rio-ASgBAgICAkTgtg3KmCjitg3Krig?cd=1&p=' + str(i)
     driver.get(url)
     current_page = driver.page_source
@@ -36,14 +37,16 @@ for i in range(1, 2): # 100 страниц
             links.append('https://www.avito.ru' + link)
         except:
             links.append('none')
-
+    if i % 10 == 0:
+        time.sleep(random.randrange(10, 20, 1))
+    print(i)
 
 # идем по ссылкам всех машин и забираем требуемую информацию
+j = 1
 for link in links:
     driver.get(link)
     current_page = driver.page_source
     soup = BeautifulSoup(current_page, 'html.parser')
-
     # Поколение
     try:
         car_name.append(soup.find('ul', class_='item-params-list').find('li', class_='item-params-list-item')
@@ -51,7 +54,6 @@ for link in links:
                         .split('(')[0].strip())
     except:
         car_name.append('None')
-
     # Мощность
     try:
         power = soup.find('ul', class_='item-params-list').find('li', class_='item-params-list-item')\
@@ -61,7 +63,6 @@ for link in links:
 
     except:
         engine_power.append('None')
-
     # Год выпуска
     try:
         years.append(soup.find('ul', class_='item-params-list').find('li', class_='item-params-list-item')\
@@ -69,7 +70,6 @@ for link in links:
                         .next_sibling.next_sibling.next_sibling.text.replace(' Год выпуска: ', '').strip())
     except:
         years.append('None')
-
     # Пробег
     try:
         km_age_temp = soup.find('ul', class_='item-params-list').find('li', class_='item-params-list-item')\
@@ -82,7 +82,6 @@ for link in links:
             km_age.append('None')
     except:
         km_age.append('None')
-
     # Состояние
     try:
         condition.append(soup.find('ul', class_='item-params-list').find('li', class_='item-params-list-item') \
@@ -91,7 +90,6 @@ for link in links:
                          .next_sibling.next_sibling.next_sibling.text.replace(' Состояние: ', '').strip())
     except:
         condition.append('None')
-
     # Количество владельцев
     try:
         owners_count.append(soup.find('ul', class_='item-params-list').find('li', class_='item-params-list-item') \
@@ -100,7 +98,6 @@ for link in links:
                          .next_sibling.next_sibling.next_sibling.text.replace(' Владельцев по ПТС: ', '').strip())
     except:
         owners_count.append('None')
-
     # Тип кузова
     try:
         body_type.append(soup.find('ul', class_='item-params-list').find('li', class_='item-params-list-item') \
@@ -110,9 +107,6 @@ for link in links:
                          .text.replace('Тип кузова: ', '').strip())
     except:
         body_type.append('None')
-
-
-
     # Тип трансмиссии
     try:
         transmission.append(soup.find('ul', class_='item-params-list').find('li', class_='item-params-list-item') \
@@ -123,25 +117,18 @@ for link in links:
                          .next_sibling.next_sibling.next_sibling.text.replace(' Коробка передач: ', '').strip())
     except:
         transmission.append('None')
-
     # Цена
     try:
         price.append(soup.find('div', class_='item-price').find('span', class_='js-item-price').text.replace(' ', ''))
     except:
         price.append('None')
 
-driver.quit()
+    if j % 20 == 0:
+        time.sleep(random.randrange(10, 20, 1))
+    print(j)
+    j = j + 1
 
-# print(links)
-# print(car_name)
-# print(engine_power)
-# print(years)
-# print(km_age)
-# print(condition)
-# print(owners_count)
-# print(transmission)
-# print(body_type)
-# print(price)
+driver.quit()
 
 # Далее зиписываем данные в файл .xls
 book = xlwt.Workbook('utf8')  # Создаем книгу
