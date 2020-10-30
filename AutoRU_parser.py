@@ -27,12 +27,6 @@ complectation_type = []
 region = []
 car_name = []
 
-
-# запускаем chrome с нашим профилем пользователя
-# file_name_profile = r'C:\\Users\\user1174\\AppData\\Local\\Google\\Chrome\\User Data'
-# options = webdriver.ChromeOptions()
-# options.add_argument("user-data-dir=" + file_name_profile)
-# driver = webdriver.Chrome(executable_path="C:\\Users\\user1174\\.PyCharmCE2019.3\\chromedriver.exe", options=options)
 driver = webdriver.Chrome(executable_path="C:\\Users\\Alexander\\.PyCharmCE2019.3\\chromedriver.exe")
 
 for i in range(1, 2): # 34 страниц Kia Rio
@@ -42,7 +36,6 @@ for i in range(1, 2): # 34 страниц Kia Rio
     links_soup = soup.find_all('a', attrs={'class': 'Link ListingItemTitle-module__link'})
     links += [link.attrs['href'] for link in links_soup]
     time.sleep(random.randrange(2, 5, 1))
-
 
 # идем по ссылкам всех автомобилей и забираем требуемую информацию
 for link in links:
@@ -54,32 +47,27 @@ for link in links:
         years.append(soup.find('li', class_='CardInfo__row CardInfo__row_year').find('a').text)
     except:
         years.append('None')
-
     # Пробег
     try:
         km_age.append(soup.find('li', class_='CardInfo__row CardInfo__row_kmAge')
                       .find('span').next_sibling.text.replace('\xa0', '').replace('км', ''))
     except:
         km_age.append('None')
-
     # Тип кузова
     try:
         body_type.append(soup.find('li', class_='CardInfo__row CardInfo__row_bodytype').find('span').next_sibling.text)
     except:
         body_type.append('None')
-
     # Цвет
     try:
         color.append(soup.find('li', class_='CardInfo__row CardInfo__row_color').find('span').next_sibling.text)
     except:
         color.append('None')
-
     # Цена
     try:
         price.append(soup.find('span', class_='OfferPriceCaption__price').text.replace('\xa0', '').replace('₽', ''))
     except:
         price.append('None')
-
     # Объем двигателя, мощность и тип топлива
     try:
         engine_row = soup.find('li', class_='CardInfo__row CardInfo__row_engine').find('div').text
@@ -92,61 +80,51 @@ for link in links:
         engine_volume.append('None')
         engine_power.append('None')
         fuel_type.append('None')
-
     # Тип трансмисии
     try:
         transmission.append(soup.find('li', class_='CardInfo__row CardInfo__row_transmission').find('span').next_sibling.text)
     except:
         transmission.append('None')
-
     # Тип привода
     try:
         drive.append(soup.find('li', class_='CardInfo__row CardInfo__row_drive').find('span').next_sibling.text)
     except:
         drive.append('None')
-
     # Расположение руля
     try:
         wheel.append(soup.find('li', class_='CardInfo__row CardInfo__row_wheel').find('span').next_sibling.text)
     except:
         wheel.append('None')
-
     # Состояние
     try:
         condition.append(soup.find('li', class_='CardInfo__row CardInfo__row_state').find('span').next_sibling.text)
     except:
         condition.append('None')
-
     # Количество владельцев
     try:
         owners_count.append(soup.find('li', class_='CardInfo__row CardInfo__row_ownersCount').find('span').next_sibling.text.replace('\xa0', ' '))
     except:
         owners_count.append('None')
-
     # Информация о ПТС
     try:
         passport.append(soup.find('li', class_='CardInfo__row CardInfo__row_pts').find('span').next_sibling.text)
     except:
         passport.append('None')
-
     # Сведения о таможне
     try:
         customs.append(soup.find('li', class_='CardInfo__row CardInfo__row_customs').find('span').next_sibling.text)
     except:
         customs.append('None')
-
     # Тип комплектации
     try:
         complectation_type.append(soup.find('div', class_='CardComplectation__titleWrap').find('h2').text)
     except:
         complectation_type.append('None')
-
     # Регион продажи
     try:
         region.append(soup.find('span', class_='MetroListPlace__regionName MetroListPlace_nbsp').text)
     except:
         region.append('None')
-
     # Название автомобиля
     try:
         car_name.append(soup.find('div', class_='CardHead-module__title').text)
