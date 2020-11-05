@@ -132,8 +132,6 @@ for link in links:
 
 driver.quit()
 
-print(owners_count)
-
 # Далее зиписываем данные в файл .xls
 book = xlwt.Workbook('utf8')  # Создаем книгу
 # Создаем шрифт
